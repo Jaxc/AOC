@@ -17,7 +17,11 @@ def read_file():
 def main():
     row_separated = read_file()
     row_separated = row_separated[0:-1]
-    #row_separated = example_input[0].split('\n')
+    row_separated = example_input[0].split('\n')
+
+    map = []
+    for row in row_separated:
+        map.append([int(char) for char in row])
 
     # Part 1
     answer = 0
