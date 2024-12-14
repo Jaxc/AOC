@@ -2,14 +2,14 @@
 import re
 from collections import Counter
 
-example_input=[
+example_input1=[
 """AAAA
 BBCD
 BBCC
 EEEC"""
 ]
 
-example_input=[
+example_input2=[
 """OOOOO
 OXOXO
 OOOOO
@@ -17,7 +17,7 @@ OXOXO
 OOOOO"""
 ]
 
-example_input=[
+example_input3=[
 """RRRRIICCFF
 RRRRIICCCF
 VVRRRCCFFF
@@ -28,6 +28,26 @@ VVIIICJJEE
 MIIIIIJJEE
 MIIISIJEEE
 MMMISSJEEE"""
+]
+
+example_input4=[
+"""AAAAAA
+AAABBA
+AAABBA
+ABBAAA
+ABBAAA
+AAAAAA"""
+]
+
+example_input5=[
+"""AAAEAAAAAA
+FFAEAADAAA
+FFAAAADACA
+FFAABAAAAB
+FFABBBABBB
+FAAAABBBBB
+FAGGABBBBB
+FAGAABBBBB"""
 ]
 
 def read_file():
@@ -74,7 +94,7 @@ def find_area(map, starx, starty):
 def main():
     row_separated = read_file()
     row_separated = row_separated[0:-1]
-    #row_separated = example_input[0].split('\n')
+    #row_separated = example_input5[0].split('\n')
 
     map = []
     for row in row_separated:
@@ -123,24 +143,58 @@ def main():
     # Part 2
     answer = 0
 
+    perimiters = []
     for area in areas:
-        perimiter = set()
+        perimiter = []
         n_fence = 0
         for cord in area[2]:
             if [cord[0] - 1, cord[1]] not in area[2]:
-                perimiter.add([[cord[0] - 1, cord[1]], [-1, 0]])
+                perimiter.append([[cord[0], cord[1]], ['up']])
             if [cord[0] + 1, cord[1]] not in area[2]:
-                perimiter.add([[cord[0] + 1, cord[1]], [+1, 0]])
+                perimiter.append([[cord[0], cord[1]], ['down']])
             if [cord[0], cord[1] - 1] not in area[2]:
-                perimiter.add([[cord[0], cord[1] - 1], [0, -1]])
+                perimiter.append([[cord[0], cord[1]], ['left']])
             if [cord[0], cord[1] + 1] not in area[2]:
-                perimiter.add([[cord[0], cord[1] + 1], [0, +1]])
+                perimiter.append([[cord[0], cord[1]], ['right']])
 
-        sides = 0
+        perimiters.append([area[0], len(area[2]), perimiter])
 
+    #resort perimiters to avoid bug
+    for perimiter in perimiters:
+        perimiter[2].sort()
 
+    for perimiter in perimiters:
+        perimeter_peices = 0
+        for i in range(len(perimiter[2])):
+            for j in range(i + 1,len(perimiter[2])):
+                if perimiter[2][i][1] == ['up'] and perimiter[2][j][1] == ['up']:
+                    if perimiter[2][j][0][0] == perimiter[2][i][0][0] and (perimiter[2][j][0][1] + 1 == perimiter[2][i][0][1] or perimiter[2][j][0][1] - 1 == perimiter[2][i][0][1]):
+                        perimiter[2][i] = None
+                        break
+                elif perimiter[2][i][1] == ['down'] and perimiter[2][j][1] == ['down']:
+                    if perimiter[2][j][0][0] == perimiter[2][i][0][0] and (perimiter[2][j][0][1] + 1 == perimiter[2][i][0][1] or perimiter[2][j][0][1] - 1 == perimiter[2][i][0][1]):
+                        perimiter[2][i] = None
+                        break
+                elif perimiter[2][i][1] == ['left'] and perimiter[2][j][1] == ['left']:
+                    if perimiter[2][j][0][1] == perimiter[2][i][0][1] and (perimiter[2][j][0][0] + 1 == perimiter[2][i][0][0] or perimiter[2][j][0][0] - 1 == perimiter[2][i][0][0]):
+                        perimiter[2][i] = None
+                        break
+                elif perimiter[2][i][1] == ['right'] and perimiter[2][j][1] == ['right']:
+                    if perimiter[2][j][0][1] == perimiter[2][i][0][1] and (perimiter[2][j][0][0] + 1 == perimiter[2][i][0][0] or perimiter[2][j][0][0] - 1 == perimiter[2][i][0][0]):
+                        perimiter[2][i] = None
+                        break
+                else:
+                    perimeter_peices += 1
 
-        answer += n_fence * len(area[2])
+                    pass
+        pass
+
+        fence_cnt = 0
+        for fence in perimiter[2]:
+            if fence is not None:
+                fence_cnt += 1
+
+        answer += fence_cnt * perimiter[1]
 
     print(answer)
 
