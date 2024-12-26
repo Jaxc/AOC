@@ -136,12 +136,26 @@ def try_move2(direction, map, curr_pos):
                 for col in affected_cols.copy():
                     if col[2] == None:
                         if map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == '[' or map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == ']':
+                            currently_active = False
                             if map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == '[':
-                                if col[1] + 1 not in [col_exist[1] for col_exist in affected_cols]:
+
+                                for col_exist in affected_cols.copy():
+                                    if col[1] + 1 == col_exist[1]:
+                                        if col_exist[2] is None:
+                                            currently_active = True
+
+                                if not currently_active:
                                     affected_cols.append([i, col[1] + 1, None])
+
                             elif map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == ']':
-                                if col[1] - 1 not in [col_exist[1] for col_exist in affected_cols]:
+                                for col_exist in affected_cols.copy():
+                                    if col[1] - 1 == col_exist[1]:
+                                        if col_exist[2] is None:
+                                            currently_active = True
+
+                                if not currently_active:
                                     affected_cols.append([i, col[1] - 1, None])
+
                         elif map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == '.':
                             col[2] = i
                             allmove_ok.append(True)
@@ -151,6 +165,15 @@ def try_move2(direction, map, curr_pos):
                             return curr_pos
 
                     else:
+
+                        """if map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == '[' or map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == ']':
+                            if map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == '[':
+                                if col[1] + 1 not in [col_exist[1] for col_exist in affected_cols]:
+                                    affected_cols.append([i, col[1] + 1, None])
+                            elif map[curr_pos[0] + mov[0] * i][col[1] + mov[1] * i] == ']':
+                                if col[1] - 1 not in [col_exist[1] for col_exist in affected_cols]:
+                                    affected_cols.append([i, col[1] - 1, None])
+                        else:"""
                         allmove_ok.append(True)
 
                 if len(affected_cols) == allmove_ok.count(True):
@@ -241,14 +264,14 @@ def main():
     temp_map = [''.join([str(item) for item in row]) for row in map]
     for move in moves:
 
-        if i % 1000 == 0:
+        if i % 100 == 0:
             pass
         current_pos = try_move2(move, map, current_pos)
-        #temp_map = [''.join([str(item) for item in row]) for row in map]
 
         i += 1
         pass
 
+    temp_map = [''.join([str(item) for item in row]) for row in map]
     for i in range(len(map)):
         for j in range(len(map[0])):
             if map[i][j] == '[':

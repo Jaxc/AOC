@@ -1,6 +1,7 @@
 
 import re
 from collections import Counter
+from copy import deepcopy
 
 example_input=[
 """"""
